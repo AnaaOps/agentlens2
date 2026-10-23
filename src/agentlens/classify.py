@@ -9,7 +9,7 @@ from collections import Counter
 from typing import Any, Optional
 
 LABELS = ("looping", "wrong_tool", "bad_arguments", "tool_error",
-          "crash", "silent_wrong_answer")
+          "crash", "empty_answer", "tool_call_as_text", "silent_wrong_answer")
 
 
 def _load(text: Optional[str]) -> dict:
@@ -50,4 +50,13 @@ def classify_run(spans: list[Any], run_status: str) -> Optional[str]:
         return "bad_arguments"
     if tool_errors:
         return "tool_error"
+    llm_spans = [s for s in spans if s["kind"] == "llm" and s["output_json"]]
+    if llm_spans:
+        last = _load(llm_spans[-1]["output_json"])
+        text = (last.get("content") or "").strip()
+        if not last.get("tool_calls"):
+            if not text:
+                return "empty_answer"
+            if text.startswith(("{", "[")) and '"name"' in text:
+                return "tool_call_as_text"
     return None

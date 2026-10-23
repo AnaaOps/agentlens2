@@ -40,3 +40,11 @@ def test_tool_error():
 def test_garbage_json_in_span_is_tolerated():
     assert classify_run([{"kind": "llm", "input_json": "{{", "output_json": None, "error": None}],
                         "success") is None
+def test_empty_answer_and_tool_call_written_as_text():
+    def final(content):
+        return {"kind": "llm", "input_json": "{}", "error": None,
+                "output_json": json.dumps({"content": content, "tool_calls": []})}
+    assert classify_run([final("")], "success") == "empty_answer"
+    assert classify_run([final('{"name": "read_file", "arguments": {"filename": "a.txt"}}')],
+                        "success") == "tool_call_as_text"
+    assert classify_run([final("The answer is 391.")], "success") is None
