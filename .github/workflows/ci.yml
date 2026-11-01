@@ -12,4 +12,4 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: pip install -e ".[dev]"
-      - run: pytest --cov=agentlens --cov-report=term-missing
+      - run: pytest --cov=src/agentlens --cov-report=term-missing
