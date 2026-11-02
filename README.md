@@ -133,3 +133,5 @@ docs/            findings.md
 
 I built this with help from an AI assistant. I ran every experiment, read the traces, and
 checked the results myself.
+
+![CI](https://github.com/AnaaOps/agentlens2/actions/workflows/ci.yml/badge.svg)
